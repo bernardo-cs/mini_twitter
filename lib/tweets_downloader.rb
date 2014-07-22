@@ -11,7 +11,7 @@ module MiniTwitter
     SN_SEEDS_DUMP = '/src/thesis/mini_twitter/storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
     attr_accessor :sn, :client
 
-    def initialize(*args, load_seeds: false)
+    def initialize(*args, load_seeds: true)
       @client = Twitter::REST::Client.new do |config|
         config.consumer_key        = args[0] || ENV['THESIS_TWITTER_KEY']
         config.consumer_secret     = args[1] || ENV['THESIS_TWITTER_SECRET']

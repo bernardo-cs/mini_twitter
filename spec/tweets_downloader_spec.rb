@@ -39,6 +39,7 @@ describe TweetsDownloader do
 
   describe '#crawl_user' do
     it "fetches a remote user by username and stores it in the SocialNetwork" do
+      @td.sn = SocialNetwork.new
       @td.crawl_user( "golfadas" )
       @td.sn.user_exists?( "golfadas" ).should be true
       @td.sn.total_number_users.should eql 1
