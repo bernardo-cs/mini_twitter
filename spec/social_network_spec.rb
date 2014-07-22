@@ -2,6 +2,8 @@ require_relative "../lib/social_network.rb"
 require_relative "../lib/user.rb"
 require_relative "../lib/tweet.rb"
 
+include MiniTwitter
+
 describe SocialNetwork do
 
   before :each do
@@ -86,7 +88,7 @@ describe SocialNetwork do
 
   describe '#to_s' do
     it "prints a resume of the social network" do
-      @sc.to_s.should eq "total number of tweets:\t\t0\ntotal number of users:\t\t3\ntotal number of followers detected:\t\t0\n"
+      @sc.to_s.should eq "      total number of tweets:\t\t0\n      total number of users:\t\t3\n      total number of followers detected:\t\t0\n"
     end
   end
 end

@@ -1,6 +1,8 @@
 require_relative "../lib/tweets_downloader.rb"
 require_relative "../lib/user.rb"
 
+include MiniTwitter
+
 describe TweetsDownloader do
   before :each do
     @td = TweetsDownloader.new( ENV['THESIS_TWITTER_DEV_KEY'],

@@ -1,6 +1,8 @@
 require_relative "../lib/user"
 require_relative "../lib/tweet.rb"
 
+include MiniTwitter
+
 describe User do
   before :each do
    @u = User.new( 12345, "golfadas" )
