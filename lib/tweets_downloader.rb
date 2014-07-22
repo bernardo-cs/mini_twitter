@@ -46,7 +46,6 @@ class TweetsDownloader
   end
 
   def crawl_user username
-    binding.pry
     unless @sn.user_exists?( username )
       tweets = fetch_user_tweets( username )
       @sn.add_user create_user( tweets )
@@ -57,7 +56,7 @@ class TweetsDownloader
     user =  users_to_crawl.to_a.sample
     twitter_catcher_main_block do
       crawl_user( user )
-      crawl users_to_crawl.delete( user )
+      crawl( users_to_crawl.delete( user ) ) if users_to_crawl.size > 0
     end
   end
 

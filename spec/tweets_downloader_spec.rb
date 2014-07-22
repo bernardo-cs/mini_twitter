@@ -57,7 +57,6 @@ describe TweetsDownloader do
       @td.sn.user_exists?("BarackObama").should    be true
       @td.sn.user_exists?("pitchforkmedia").should be true
       @td.sn.total_number_tweets.should be > 0
-      binding.pry
     end
   end
 end
