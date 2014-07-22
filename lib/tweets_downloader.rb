@@ -8,8 +8,10 @@ module MiniTwitter
 
   class TweetsDownloader
     MAX_ATTEMPTS = 300000
+    SN_SEEDS_DUMP = '/src/thesis/mini_twitter/storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
     attr_accessor :sn, :client
-    def initialize(*args)
+
+    def initialize(*args, load_seeds: false)
       @client = Twitter::REST::Client.new do |config|
         config.consumer_key        = args[0] || ENV['THESIS_TWITTER_KEY']
         config.consumer_secret     = args[1] || ENV['THESIS_TWITTER_SECRET']
@@ -26,6 +28,7 @@ module MiniTwitter
       @seed = ( args[0] if args.size == 1 ) || Set.new([14761655,14089195,255747911,813286])
       @sn = SocialNetwork.new
       @unacessible_users_ids = Set.new
+      load_seeds! if load_seeds
     end
 
     def twitter_catcher_main_block &block
@@ -46,18 +49,18 @@ module MiniTwitter
       end
     end
 
-    def crawl_user username
-      unless @sn.user_exists?( username )
-        tweets = fetch_user_tweets( username )
-        @sn.add_user create_user( tweets )
-      end
-    end
-
     def crawl users_to_crawl = @seed
       user =  users_to_crawl.to_a.sample
       twitter_catcher_main_block do
         crawl_user( user )
         crawl( users_to_crawl.delete( user ) ) if users_to_crawl.size > 0
+      end
+    end
+
+    def crawl_user username
+      unless @sn.user_exists?( username )
+        tweets = fetch_user_tweets( username )
+        @sn.add_user create_user( tweets )
       end
     end
 
@@ -75,6 +78,10 @@ module MiniTwitter
       followers    = @client.follower_ids( tweet_user.screen_name ).take(50).to_a
       User.new( tweet_user.id, tweet_user.screen_name, local_tweets, followers )
     end
-  end
 
+    private
+    def load_seeds!
+      @sn = @sn.unmarshal!( SN_SEEDS_DUMP  ) if File.exist?( SN_SEEDS_DUMP )
+    end
+  end
 end
