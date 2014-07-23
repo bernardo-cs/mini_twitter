@@ -8,7 +8,7 @@ module MiniTwitter
 
   class TweetsDownloader
     MAX_ATTEMPTS = 300000
-    SN_SEEDS_DUMP = '/src/thesis/mini_twitter/storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
+    SN_SEEDS_DUMP = '../frozen_storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
     attr_accessor :sn, :client
 
     def initialize(*args, load_seeds: true)
