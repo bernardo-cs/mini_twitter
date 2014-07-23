@@ -9,7 +9,7 @@ Mini Twitter is a simple way to get a twitter crawler up and running without muc
 Tweets Downloader is the class that lets you download new tweets:
 
 ~~~ruby
-require_relative "../lib/dataset_mapper.rb"
+require_relative "../lib/tweets_downloader.rb"
 @td = TweetsDownloader.new( ENV['THESIS_TWITTER_DEV_KEY'],
                                ENV['THESIS_TWITTER_DEV_SECRET'],
                                ENV['THESIS_TWITTER_DEV_ACCESS_TOKEN'],
