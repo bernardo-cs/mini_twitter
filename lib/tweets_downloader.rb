@@ -8,6 +8,7 @@ require "twitter"
 module MiniTwitter
 
   class TweetsDownloader
+    MIN_NUMBER_TWEETS = 10
     MAX_ATTEMPTS = 300000
     SN_SEEDS_DUMP = '../frozen_storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
     attr_accessor :sn, :client
@@ -65,9 +66,9 @@ module MiniTwitter
     end
 
     def crawl_user username
-      unless @sn.user_exists?( username )
+      unless @sn.user_exists?( username ) || @unacessible_users_ids.include?( username )
         tweets = fetch_user_tweets( username )
-        @sn.add_user create_user( tweets )
+        @sn.add_user create_user( tweets ) if tweets.size > MIN_NUMBER_TWEETS
       end
     end
 
@@ -76,7 +77,11 @@ module MiniTwitter
     end
 
     def fetch_user_tweets username
-      @client.user_timeline(username,count: 200, exclude_replies: true, include_rts: false)
+      begin
+        @client.user_timeline(username,count: 200, exclude_replies: true, include_rts: false)
+      rescue Twitter::Error::Unauthorized
+        @unacessible_users_ids.add username
+      end
     end
 
     def create_user tweets
