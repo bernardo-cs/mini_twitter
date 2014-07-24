@@ -1,17 +1,18 @@
+require_relative "../../data_parser/lib/data_parser"
+require_relative "./social_network.rb"
+require_relative "./user.rb"
+require_relative "./tweet.rb"
+require 'set'
+require "twitter"
+
 module MiniTwitter
-  require_relative "../../data_parser/lib/data_parser"
-  require_relative "./social_network.rb"
-  require_relative "./user.rb"
-  require_relative "./tweet.rb"
-  require 'set'
-  require "twitter"
 
   class TweetsDownloader
     MAX_ATTEMPTS = 300000
     SN_SEEDS_DUMP = '../frozen_storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
     attr_accessor :sn, :client
 
-    def initialize(*args, load_seeds: true)
+    def initialize(*args, unmarshal_social_network: true)
       @client = Twitter::REST::Client.new do |config|
         config.consumer_key        = args[0] || ENV['THESIS_TWITTER_KEY']
         config.consumer_secret     = args[1] || ENV['THESIS_TWITTER_SECRET']
@@ -28,7 +29,7 @@ module MiniTwitter
       @seed = ( args[0] if args.size == 1 ) || Set.new([14761655,14089195,255747911,813286])
       @sn = SocialNetwork.new
       @unacessible_users_ids = Set.new
-      load_seeds! if load_seeds
+      unmarshal_social_network! if unmarshal_social_network
     end
 
     def twitter_catcher_main_block serialize_on_rate_limit = false, &block
@@ -51,9 +52,12 @@ module MiniTwitter
       end
     end
 
-    def crawl users_to_crawl = @seed, infinity = false
+    #TODO crawl should not receive the first argument
+    #     it should know if the social network is empty or
+    #     if it was unmarshaled
+    def crawl users_to_crawl = @seed, infinity:  false, serialize_on_rate_limit: false
       user =  users_to_crawl.to_a.sample
-      twitter_catcher_main_block do
+      twitter_catcher_main_block( serialize_on_rate_limit ) do
         crawl_user( user )
         users_to_crawl = @sn.users_to_crawl    if infinity
         crawl( users_to_crawl.delete( user ) ) if users_to_crawl.size > 0
@@ -83,7 +87,7 @@ module MiniTwitter
     end
 
     private
-    def load_seeds!
+    def unmarshal_social_network!
       @sn = @sn.unmarshal!( SN_SEEDS_DUMP  ) if File.exist?( SN_SEEDS_DUMP )
     end
   end
