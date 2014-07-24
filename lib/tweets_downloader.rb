@@ -11,9 +11,9 @@ module MiniTwitter
     MIN_NUMBER_TWEETS = 10
     MAX_ATTEMPTS = 300000
     SN_SEEDS_DUMP = '../frozen_storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
-    attr_accessor :sn, :client
+    attr_accessor :sn, :client, :serialize_on_rate_limit
 
-    def initialize(*args, unmarshal_social_network: true)
+    def initialize(*args, unmarshal_social_network: true, serialize_on_rate_limit: false)
       @client = Twitter::REST::Client.new do |config|
         config.consumer_key        = args[0] || ENV['THESIS_TWITTER_KEY']
         config.consumer_secret     = args[1] || ENV['THESIS_TWITTER_SECRET']
@@ -31,9 +31,10 @@ module MiniTwitter
       @sn = SocialNetwork.new
       @unacessible_users_ids = Set.new
       unmarshal_social_network! if unmarshal_social_network
+      @serialize_on_rate_limit = serialize_on_rate_limit
     end
 
-    def twitter_catcher_main_block serialize_on_rate_limit = false, &block
+    def twitter_catcher_main_block  &block
       num_attempts = 0
       begin
         num_attempts += 1
@@ -43,7 +44,7 @@ module MiniTwitter
           puts "Rate limit reached, waiting 15min...",
                "Social network state: ",
                @sn.to_s
-          @sn.marshal! if serialize_on_rate_limit
+          @sn.marshal! if @serialize_on_rate_limit
           sleep error.rate_limit.reset_in
           puts "retrying...."
           retry
@@ -56,9 +57,9 @@ module MiniTwitter
     #TODO crawl should not receive the first argument
     #     it should know if the social network is empty or
     #     if it was unmarshaled
-    def crawl users_to_crawl = @seed, infinity:  false, serialize_on_rate_limit: false
+    def crawl users_to_crawl = @seed, infinity:  false
       user =  users_to_crawl.to_a.sample
-      twitter_catcher_main_block( serialize_on_rate_limit ) do
+      twitter_catcher_main_block do
         crawl_user( user )
         users_to_crawl = @sn.users_to_crawl    if infinity
         crawl( users_to_crawl.delete( user ) ) if users_to_crawl.size > 0
