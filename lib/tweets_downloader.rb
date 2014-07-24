@@ -31,15 +31,17 @@ module MiniTwitter
       load_seeds! if load_seeds
     end
 
-    def twitter_catcher_main_block &block
+    def twitter_catcher_main_block serialize_on_rate_limit = false, &block
       num_attempts = 0
       begin
         num_attempts += 1
         yield self
       rescue Twitter::Error::TooManyRequests => error
         if num_attempts <= MAX_ATTEMPTS
-          puts "Rate limit reached, waiting 15min..."
-          puts @sn.to_s
+          puts "Rate limit reached, waiting 15min...",
+               "Social network state: ",
+               @sn.to_s
+          @sn.marshal! if serialize_on_rate_limit
           sleep error.rate_limit.reset_in
           puts "retrying...."
           retry
@@ -49,10 +51,11 @@ module MiniTwitter
       end
     end
 
-    def crawl users_to_crawl = @seed
+    def crawl users_to_crawl = @seed, infinity = false
       user =  users_to_crawl.to_a.sample
       twitter_catcher_main_block do
         crawl_user( user )
+        users_to_crawl = @sn.users_to_crawl    if infinity
         crawl( users_to_crawl.delete( user ) ) if users_to_crawl.size > 0
       end
     end
