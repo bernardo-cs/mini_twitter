@@ -13,7 +13,7 @@ module MiniTwitter
     SN_SEEDS_DUMP = '../frozen_storage/MiniTwitter::SocialNetwork2014-07-22T10:26:42Z.txt'
     attr_accessor :sn, :client, :serialize_on_rate_limit
 
-    def initialize(*args, unmarshal_social_network: true, serialize_on_rate_limit: false)
+    def initialize(*args, unmarshal_social_network: true, serialize_on_rate_limit: false, latest_version: false )
       @client = Twitter::REST::Client.new do |config|
         config.consumer_key        = args[0] || ENV['THESIS_TWITTER_KEY']
         config.consumer_secret     = args[1] || ENV['THESIS_TWITTER_SECRET']
@@ -30,7 +30,7 @@ module MiniTwitter
       @seed = ( args[0] if args.size == 1 ) || Set.new([14761655,14089195,255747911,813286])
       @sn = SocialNetwork.new
       @unacessible_users_ids = Set.new
-      unmarshal_social_network! if unmarshal_social_network
+      unmarshal_social_network!( latest_version ) if unmarshal_social_network
       @serialize_on_rate_limit = serialize_on_rate_limit
     end
 
@@ -93,8 +93,12 @@ module MiniTwitter
     end
 
     private
-    def unmarshal_social_network!
-      @sn = @sn.unmarshal!( SN_SEEDS_DUMP  ) if File.exist?( SN_SEEDS_DUMP )
+    def unmarshal_social_network! latest_version
+      if latest_version
+        @sn = @sn.unmarshal_latest!
+      else
+        @sn = @sn.unmarshal!( SN_SEEDS_DUMP  ) if File.exist?( SN_SEEDS_DUMP )
+      end
     end
   end
 end

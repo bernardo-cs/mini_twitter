@@ -28,6 +28,19 @@ Crawl an array of users safelly, if API limit is achieved wait 15 minutes and th
 @td.crawl( ['officialjaden', 14761655 ] ) 
 ~~~
 
+## Infinite Crawlling
+
+If you want to blindelly crawl twitter, set the crawller to serialize the social network when a rate limite is achived. Afterwards you can always desserilize it. Ex:
+~~~ruby
+td = MiniTwitter::TweetsDownloader.new unmarshal_social_network: true, 
+                                       serialize_on_rate_limit: true, 
+                                       latest_version: true 
+puts td.sn.to_s
+#      total number of tweets:           1436
+#      total number of users:            15
+#      total number of followers detected:               626
+~~~
+
 For more examples and usage, check the bin or spec folder.
 
 ## License
