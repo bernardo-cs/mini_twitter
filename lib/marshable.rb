@@ -22,7 +22,7 @@ module MiniTwitter
     end
 
     def lastest_marshal_version
-       File.join(marshal_folder, Dir.new( marshal_folder ).to_a.last )
+       File.join(marshal_folder, Dir.new( marshal_folder ).to_a.sort.last )
     end
   end
 end
