@@ -18,8 +18,21 @@ module MiniTwitter
       user_name.class == String ? @users.has_key?( user_name.to_sym ) : user_exists_by_id?( user_name )
     end
 
+    def all_tweets_trimmed_text
+      all_tweets.map( &:trimmed_text)
+    end
+
+    def all_tweets_text
+      all_tweets.map( &:text)
+    end
+
+    def all_tweets
+      @users.inject([]){ |arr,u| arr << u.last.tweets}.flatten
+    end
+
     def total_number_tweets
-      @users.inject(0){ |sum, e| sum +=  e.last.tweets.count }
+      all_tweets.count
+      #@users.inject(0){ |sum, e| sum +=  e.last.tweets.count }
     end
 
     def total_number_users

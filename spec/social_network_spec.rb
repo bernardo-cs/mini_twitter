@@ -30,6 +30,26 @@ describe SocialNetwork do
     @sc[:cobama].tweets.first.text.should eq( "OH my god such amazingness" )
   end
 
+  describe '#all_tweets_trimmed_text' do
+    it "returns all tweets, in a vector, just the string text, trimmed" do
+      @sc.total_number_tweets.should eq( 0 )
+      @sc.add_user( User.new( 12357, "cobama" ) )
+      @sc[:cobama].tweets << Tweet.new( 12345, "OH my god such amazingness"  )
+      @sc[:cobama].tweets << Tweet.new( 12346, "I Love justin bieber"  )
+      @sc.all_tweets_trimmed_text.should include("god amazingn", "love justin bieber")
+    end
+  end
+
+  describe '#all_tweets_text' do
+    it "returns all tweets, in a vector, just the string text" do
+      @sc.total_number_tweets.should eq( 0 )
+      @sc.add_user( User.new( 12357, "cobama" ) )
+      @sc[:cobama].tweets << Tweet.new( 12345, "OH my god such amazingness"  )
+      @sc[:cobama].tweets << Tweet.new( 12346, "I Love justin bieber"  )
+      @sc.all_tweets_text.should include("OH my god such amazingness", "I Love justin bieber")
+    end
+  end
+
   describe '#total_number_tweets' do
     it "returns the total number of tweets" do
       @sc.total_number_tweets.should eq( 0 )
