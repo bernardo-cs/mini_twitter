@@ -69,7 +69,7 @@ module MiniTwitter
     def crawl_user username
       unless @sn.user_exists?( username ) || @unacessible_users_ids.include?( username )
         tweets = fetch_user_tweets( username )
-        @sn.add_user create_user( tweets ) if tweets.size > MIN_NUMBER_TWEETS
+        @sn.add_user create_user( tweets ) if ( tweets.size > MIN_NUMBER_TWEETS && !tweets.nil? )
       end
     end
 
@@ -82,6 +82,7 @@ module MiniTwitter
         @client.user_timeline(username,count: 200, exclude_replies: true, include_rts: false)
       rescue Twitter::Error::Unauthorized
         @unacessible_users_ids.add username
+        return nil
       end
     end
 
