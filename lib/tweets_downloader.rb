@@ -69,7 +69,9 @@ module MiniTwitter
     def crawl_user username
       unless @sn.user_exists?( username ) || @unacessible_users_ids.include?( username )
         tweets = fetch_user_tweets( username )
-        @sn.add_user create_user( tweets ) if ( tweets.size > MIN_NUMBER_TWEETS && !tweets.nil? )
+        unless !tweets.nil?
+          @sn.add_user create_user( tweets ) if  tweets.size > MIN_NUMBER_TWEETS
+        end
       end
     end
 
