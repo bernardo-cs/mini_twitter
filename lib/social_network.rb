@@ -1,7 +1,9 @@
-module MiniTwitter
-  require_relative "./marshable.rb"
-  require 'set'
+require_relative "./marshable.rb"
+require_relative "./user.rb"
+require_relative "./tweet.rb"
+require 'set'
 
+module MiniTwitter
   class SocialNetwork
     include Marshable
     attr_accessor :users
@@ -19,7 +21,7 @@ module MiniTwitter
     end
 
     def all_tweets_trimmed_text
-      all_tweets.map( &:trimmed_text)
+      all_tweets.map( &:trimmed_text).select{ |n| n.size > 4 }
     end
 
     def all_tweets_text
