@@ -21,7 +21,8 @@ module MiniTwitter
     end
 
     def all_tweets_trimmed_text
-      all_tweets.map( &:trimmed_text).select{ |n| n.size > 4 }
+      #all_tweets.map( &:trimmed_text).select{ |n| n.size > 4 }
+      all_tweets.map( &:trimmed_text)
     end
 
     def all_tweets_text
