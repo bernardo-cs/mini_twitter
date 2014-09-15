@@ -82,7 +82,7 @@ module MiniTwitter
     def fetch_user_tweets username
       begin
         @client.user_timeline(username,count: 200, exclude_replies: true, include_rts: false)
-      rescue Twitter::Error::Unauthorized
+      rescue Twitter::Error
         @unacessible_users_ids.add username
         return nil
       end
