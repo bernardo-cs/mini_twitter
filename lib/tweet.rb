@@ -2,7 +2,7 @@ module MiniTwitter
   require_relative "../../data_parser/lib/data_parser.rb"
   class Tweet
 
-    attr_reader :id, :text, :trimmed_text
+    attr_reader :id, :text
     def initialize(*args)
       @id   = args[0]
       @text = args[1]
